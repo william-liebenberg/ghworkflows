@@ -1,0 +1,52 @@
+name: Deploy to Azure Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      resource_group:
+        required: true
+        type: string
+      webapp_name:
+        required: true
+        type: string
+      subscription_id:
+        required: true
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: webapi-artifact
+          path: publish_output/
+
+    #   - name: Authenticate with Azure using OIDC
+    #     uses: azure/login@v2
+    #     with:
+    #       client-id: ${{ secrets.AZURE_CLIENT_ID }}
+    #       tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+    #       subscription-id: ${{ inputs.subscription_id }}
+
+    #   - name: Deploy to Azure
+    #     run: |
+    #       az webapp deployment source config-zip \
+    #         --resource-group ${{ inputs.resource_group }} \
+    #         --name ${{ inputs.webapp_name }} \
+    #         --src publish_output/
+
+      - name: Deploy to Azure
+        run: echo "Look mum, i deployed to Azure!"

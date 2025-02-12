@@ -17,23 +17,45 @@ env:
   ARTIFACT_NAME: "my-webapi-artifact"
   SOLUTION_NAME: "MyWebApi"
   SOLUTION_PATH: "src/MyWebApi/MyWebApi.sln"
+  AZURE_SUBSCRIPTION_ID: "my-subscription-id"
+  AZURE_RESOURCE_GROUP: "my-resource-group"
+  WEBAPP_DEV: "my-app-dev"
+  WEBAPP_TEST: "my-app-test"
+  WEBAPP_PROD: "my-app-prod"
 
 jobs:
-  initialize_vars:
+  Setup:
     runs-on: ubuntu-latest
     outputs:
       artifact_name: ${{ env.ARTIFACT_NAME }}
       solution_name: ${{ env.SOLUTION_NAME }}
       solution_path: ${{ env.SOLUTION_PATH }}
+      azure_subscription_id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+      azure_resource_group: ${{ env.AZURE_RESOURCE_GROUP }}
+      webapp_dev: ${{ env.WEBAPP_DEV }}
+      webapp_test: ${{ env.WEBAPP_TEST }}
+      webapp_prod: ${{ env.WEBAPP_PROD }}
     steps:
-      - name: Initialise Variables
-        run: echo "Initialising environment variables"
+      - name: Setting up environment variables
+        run: echo "Setting up environment variables"
 
-  build-and-test:
+  Build-and-Test:
     name: Build, Test & Publish
-    needs: initialize_vars
+    needs: Setup
     uses: ./.github/workflows/template-build-test-publish.yaml
     with:
-      artifact_name: ${{ needs.initialize_vars.outputs.artifact_name }}
-      solution_name: ${{ needs.initialize_vars.outputs.solution_name }}
-      solution_path: ${{ needs.initialize_vars.outputs.solution_path }}
+      artifact_name: ${{ needs.Setup.outputs.artifact_name }}
+      solution_name: ${{ needs.Setup.outputs.solution_name }}
+      solution_path: ${{ needs.Setup.outputs.solution_path }}
+
+  deploy-dev:
+    name: Deploy to DEV
+    if: github.event_name == 'push'
+    needs: [Setup, Build-and-Test]
+    uses: ./.github/workflows/template-deploy.yaml
+    with:
+      environment: "DEV"
+      subscription_id: ${{ needs.Setup.outputs.azure_subscription_id }}
+      resource_group: ${{ needs.Setup.outputs.azure_resource_group }}
+      webapp_name: ${{ needs.Setup.outputs.webapp_dev }}
+    secrets: inherit
