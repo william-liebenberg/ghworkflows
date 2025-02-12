@@ -1,0 +1,58 @@
+name: Build, Test & Publish Workflow
+
+on:
+  workflow_call:
+    inputs:
+      solution_path:
+        required: true
+        type: string
+      artifact_name:
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: '8.0'
+  DOTNET_TEST_REPORTS_DIR: "TestResults"
+
+jobs:
+  build-test-publish:
+    name: Build, Test & Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ inputs.solution_path }}
+
+      - name: Build
+        run: dotnet build ${{ inputs.solution_path }}  --configuration Release --no-restore
+
+      - name: Run Tests
+        run: dotnet test ${{ inputs.solution_path }} --configuration Release --no-build --logger "trx;LogFileName=test-results.trx" --results-directory ${{ env.DOTNET_TEST_REPORTS_DIR }}
+
+      - name: Publish Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ${{ env.DOTNET_TEST_REPORTS_DIR }}
+
+      - name: Fail workflow if tests fail
+        if: failure()
+        run: exit 1
+
+      - name: Publish Artifact
+        run: dotnet publish ${{ inputs.solution_path }} -c Release -o publish_output
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: publish_output/

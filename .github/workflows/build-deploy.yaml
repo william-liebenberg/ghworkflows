@@ -1,0 +1,20 @@
+name: Deployment Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+env:
+  ARTIFACT_NAME: "my-webapi-artifact"
+
+jobs:
+  build-and-test:
+    name: Build, Test & Publish
+    uses: ./.github/workflows/template-build-test-publish.yaml
+    with:
+      artifact_name: ${{ env.ARTIFACT_NAME }}
+      solution_path: "src/MyWebApi/MyWebApi.csproj"
