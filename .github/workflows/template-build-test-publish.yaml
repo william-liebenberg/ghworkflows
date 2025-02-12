@@ -3,6 +3,9 @@ name: Build, Test & Publish Workflow
 on:
   workflow_call:
     inputs:
+      solution_name:
+        required: true
+        type: string
       solution_path:
         required: true
         type: string
@@ -26,7 +29,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: ./global.json
-
+  
       - name: Restore dependencies
         run: dotnet restore ${{ inputs.solution_path }}
 
@@ -45,8 +48,8 @@ jobs:
 
       - uses: dorny/test-reporter@v1
         if: always()
-        with:
-            name: ${{ inputs.solution_path }} Tests                  # Name of the check run which will be created
+        with:            
+            name: ${{ inputs.solution_name }} Tests                  # Name of the check run which will be created
             path: ${{ env.DOTNET_TEST_REPORTS_DIR }}/*.trx                     # Path to test results (inside artifact .zip)
             reporter: dotnet-trx
 
