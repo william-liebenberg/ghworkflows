@@ -8,6 +8,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 env:
   ARTIFACT_NAME: "my-webapi-artifact"
   SOLUTION_PATH: "src/MyWebApi/MyWebApi.sln"
