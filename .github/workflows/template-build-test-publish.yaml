@@ -43,6 +43,14 @@ jobs:
           name: test-results
           path: ${{ env.DOTNET_TEST_REPORTS_DIR }}
 
+      - uses: dorny/test-reporter@v1
+        if: always()
+        with:
+            artifact: test-results            # artifact name
+            name: DOTNET Tests                  # Name of the check run which will be created
+            path: '*.trx'                     # Path to test results (inside artifact .zip)
+            reporter: dotnet-trx
+
       - name: Fail workflow if tests fail
         if: failure()
         run: exit 1
