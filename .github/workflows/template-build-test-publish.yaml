@@ -46,7 +46,7 @@ jobs:
       - uses: dorny/test-reporter@v1
         if: always()
         with:
-            name: DOTNET Tests                  # Name of the check run which will be created
+            name: ${{ inputs.solution_path }} Tests                  # Name of the check run which will be created
             path: ${{ env.DOTNET_TEST_REPORTS_DIR }}/*.trx                     # Path to test results (inside artifact .zip)
             reporter: dotnet-trx
 
