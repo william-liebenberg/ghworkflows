@@ -6,13 +6,16 @@ on:
       environment:
         required: true
         type: string
+      subscription_id:
+        required: true
+        type: string
       resource_group:
         required: true
         type: string
       webapp_name:
         required: true
         type: string
-      subscription_id:
+      artifact_name:
         required: true
         type: string
     # secrets:
@@ -31,7 +34,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          name: webapi-artifact
+          name: ${{ inputs.artifact_name }}
           path: publish_output/
 
     #   - name: Authenticate with Azure using OIDC
