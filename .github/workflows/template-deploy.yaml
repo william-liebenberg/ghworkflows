@@ -1,4 +1,4 @@
-name: Deploy to Azure Workflow
+name: 🚀 Template - Deploy to Azure
 
 on:
   workflow_call:

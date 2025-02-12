@@ -1,4 +1,4 @@
-name: Deployment Workflow
+name: Workflow - Build and Deployment to Azure Environments
 
 on:
   pull_request:
