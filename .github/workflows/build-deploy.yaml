@@ -10,7 +10,7 @@ on:
 
 env:
   ARTIFACT_NAME: "my-webapi-artifact"
-  SOLUTION_PATH: "src/MyWebApi/MyWebApi.csproj"
+  SOLUTION_PATH: "src/MyWebApi/MyWebApi.sln"
 
 jobs:
   initialize_vars:

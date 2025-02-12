@@ -11,7 +11,6 @@ on:
         type: string
 
 env:
-  DOTNET_VERSION: '8.0'
   DOTNET_TEST_REPORTS_DIR: "TestResults"
 
 jobs:
@@ -23,10 +22,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET ${{ env.DOTNET_VERSION }}
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          global-json-file: csharp/global.json
 
       - name: Restore dependencies
         run: dotnet restore ${{ inputs.solution_path }}
