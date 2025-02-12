@@ -10,11 +10,19 @@ on:
 
 env:
   ARTIFACT_NAME: "my-webapi-artifact"
+  SOLUTION_PATH: "src/MyWebApi/MyWebApi.csproj"
 
 jobs:
+  initialize_vars:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ env.ARTIFACT_NAME }}
+      solution_path: ${{ env.SOLUTION_PATH }}
+
   build-and-test:
     name: Build, Test & Publish
+    needs: initialize_vars
     uses: ./.github/workflows/template-build-test-publish.yaml
     with:
-      artifact_name: ${{ env.ARTIFACT_NAME }}
-      solution_path: "src/MyWebApi/MyWebApi.csproj"
+      artifact_name: ${{ needs.initialize_vars.outputs.artifact_name }}
+      solution_path: ${{ needs.initialize_vars.outputs.solution_path }}
